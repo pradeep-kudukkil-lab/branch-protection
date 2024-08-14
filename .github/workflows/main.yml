@@ -1,0 +1,36 @@
+name: Production Deployment
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check branch name
+        run: |
+          if [[ ! "${{ github.head_ref }}" == feature* ]]; then
+            echo "Pull request is from a non-feature branch. Closing the PR and failing the job."
+            gh pr close ${{ github.event.pull_request.number }} -c "Closed: PR is from a non-feature branch."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
+
+      - name: Deploy to Production
+        run: |
+          echo "Deploying to production..."
+
+      - name: Post-deployment Step 1
+        run: |
+          echo "Post-deployment step 1..."
+
+      - name: Post-deployment Step 2
+        run: |
+          echo "Post-deployment step 2..."
